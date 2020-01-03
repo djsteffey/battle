@@ -38,7 +38,7 @@ class MainScene extends Phaser.Scene {
 		this.actor_renderers = [
             new ActorRenderer(this, 325, 224, this.actors[0]),
             new ActorRenderer(this, 64, 100, this.actors[0]),
-            new ActorRenderer(this, 64, 400, this.actors[0]),
+            new ActorRenderer(this, 64, 348, this.actors[0]),
             new ActorRenderer(this, 581, 224, this.actors[1]),
             new ActorRenderer(this, 581, 224, this.actors[1]),
             new ActorRenderer(this, 581, 224, this.actors[1])
@@ -46,8 +46,8 @@ class MainScene extends Phaser.Scene {
 
         // abilities bar
         this.abilities_bars = [
-            new AbilitiesBar(this, 189, 400),
-            new AbilitiesBar(this, 581, 400)
+            new AbilitiesBar(this, 189, 512),
+            new AbilitiesBar(this, 581, 512)
         ];
 	}
 	
