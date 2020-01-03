@@ -35,9 +35,11 @@ class ProgressBar extends Phaser.GameObjects.Container{
 			this.height / 2,
 			this.value + '/' + this.max_value,
 			{
-				fontSize: font_size,
+                fontSize: font_size,
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
 				fill: '#ffffff',
-				align: 'center'
+                align: 'center'
 			}
 		);
 		this.text.setOrigin(0.5);

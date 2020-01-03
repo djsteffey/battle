@@ -1,6 +1,6 @@
 // create the game
 new Phaser.Game({
-	width: 800,
+	width: 1066,
 	height: 600,
 	backgroundColor: '#000000',
 	pixelArt: true,
