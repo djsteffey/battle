@@ -1,3 +1,5 @@
+const UPDATE_RATE = 100;
+
 class MainScene extends Phaser.Scene {
 	// construct me
 	constructor(){
@@ -13,7 +15,7 @@ class MainScene extends Phaser.Scene {
 	create() {
 		// track for delta time
 		this.last_time = new Date();
-		this.delta_time = 0;
+		this.accumulated_delta_ms = 0;
 
 		// debug text
 		this.debug_text = this.add.text(
@@ -49,25 +51,31 @@ class MainScene extends Phaser.Scene {
             new AbilitiesBar(this, 189, 512),
             new AbilitiesBar(this, 581, 512)
         ];
+		this.abilities_bars[0].set_actor(this.actors[0]);
+		this.abilities_bars[1].set_actor(this.actors[1]);
 	}
 	
 	update() {
 		// get the delta time
 		const now_time = new Date();
-		this.delta_time += (now_time - this.last_time);
+		const delta_ms = (now_time - this.last_time);
+		this.accumulated_delta_ms += delta_ms;
 		this.last_time = now_time;
 
-		// update every 1000 ms
-		if (this.delta_time >= 1000){
+		// update every UPDATE_RATE ms
+		while (this.accumulated_delta_ms >= UPDATE_RATE){
 			// clear delta
-			this.delta_time = 0;
+			this.accumulated_delta_ms -= UPDATE_RATE;
 			
 			// update actors
 			for (let i = 0; i < this.actors.length; ++i){
-				this.actors[i].update();
+				this.actors[i].update(UPDATE_RATE);
 			}
 			for (let i = 0; i < this.actor_renderers.length; ++i){
 				this.actor_renderers[i].update();
+			}
+			for (let i = 0; i < this.abilities_bars.length; ++i){
+				this.abilities_bars[i].update();
 			}
 		}
 
