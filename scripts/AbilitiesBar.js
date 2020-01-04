@@ -26,21 +26,32 @@ class AbilitiesBar extends Phaser.GameObjects.Container{
 	}
 	
 	update(){		
+		// clear drawing
 		this.background.clear();
+
+		// draw background
 		this.background.lineStyle(2, this.background_color, this.background_alpha);
-		this.background.fillStyle(0x00ff00, 1);
 		this.background.strokeRect(0, 0, this.width, this.height);
-		this.background.fillRect(8 + (0 * (8 + 64)), 8, 64, 64);
-		this.background.fillRect(8 + (1 * (8 + 64)), 8, 64, 64);
-		this.background.fillRect(8 + (2 * (8 + 64)), 8, 64, 64);
-		this.background.fillRect(8 + (3 * (8 + 64)), 8, 64, 64);
+
 		
 		if (this.actor != null){
 			for (let i = 0; i < this.actor.abilities.length; ++i){
-				let percent_ready = this.actor.abilities[i].get_ready_percent();
-				if (percent_ready !== 1){
-					this.background.fillStyle(0x000000, 0.75);
-					this.background.fillRect(8 + (i * (8 + 64)), 8, 64, 64 * (1 - percent_ready));
+				if (this.actor.abilities[i] !== null){
+					// draw ability
+					if (this.actor.abilities[i].get_is_ready()){
+						this.background.fillStyle(0x00ff00, 1);
+					}
+					else{
+						this.background.fillStyle(0x008000, 1);
+					}
+					this.background.fillRect(8 + (i * (8 + 64)), 8, 64, 64);
+
+					// draw shading over the cooldown portion
+					if (this.actor.abilities[i].get_is_ready() === false){
+						this.background.fillStyle(0x000000, 0.75);
+						let percent_ready = this.actor.abilities[i].get_ready_percent();
+						this.background.fillRect(8 + (i * (8 + 64)), 8, 64, 64 * (1 - percent_ready));
+					}
 				}
 			}
 		}
