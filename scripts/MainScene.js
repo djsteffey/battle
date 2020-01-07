@@ -36,17 +36,21 @@ class MainScene extends Phaser.Scene {
 		// actors
 		this.actors = [
             new Actor('djs 00'),
-            new Actor('other 00')
+            new Actor('djs 01'),
+            new Actor('djs 02'),
+            new Actor('other 00'),
+            new Actor('other 01'),
+            new Actor('other 02')
 		];
 		
 		// renderers
 		this.actor_renderers = [
             new ActorRenderer(this, 325, 224, this.actors[0]),
-            new ActorRenderer(this, 64, 100, this.actors[0]),
-            new ActorRenderer(this, 64, 348, this.actors[0]),
-            new ActorRenderer(this, 581, 224, this.actors[1]),
-            new ActorRenderer(this, 581, 224, this.actors[1]),
-            new ActorRenderer(this, 581, 224, this.actors[1])
+            new ActorRenderer(this, 64, 100, this.actors[1]),
+            new ActorRenderer(this, 64, 348, this.actors[2]),
+            new ActorRenderer(this, 581, 224, this.actors[3]),
+            new ActorRenderer(this, 581, 224, this.actors[4]),
+            new ActorRenderer(this, 581, 224, this.actors[5])
         ];
 
         // abilities bar
@@ -80,9 +84,6 @@ class MainScene extends Phaser.Scene {
         }.bind(this));
 		this.abilities_bars[0].set_actor(this.actors[0]);
         this.abilities_bars[1].set_actor(this.actors[1]);
-        
-
-
 	}
 	
 	update() {
