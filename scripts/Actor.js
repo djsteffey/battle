@@ -10,7 +10,7 @@ class Actor{
 		this.abilities = [
 			new Ability('ability 00', 1000),
 			null,
-			null,
+			new Ability('ability 00', 1000),
 			new Ability('ability 01', 5000)
 		];
 	}
@@ -24,8 +24,14 @@ class Actor{
 		}
 
 		// todo make better ai
-		// find the first ability that is ready and execute it
-		if (get_random_int(0, 100) < 10){
+        // find the first ability that is ready and execute it
+        let r = get_random_int(0, 3);
+        if (this.abilities[r] !== null){
+            if (this.abilities[r].get_is_ready()){
+                this.abilities[r].execute();
+            }
+        }
+/*		if (get_random_int(0, 100) < 10){
 			for (let i = 0; i < this.abilities.length; ++i){
 				if (this.abilities[i] !== null){
 					if (this.abilities[i].get_is_ready()){
@@ -34,6 +40,6 @@ class Actor{
 					}
 				}
 			}
-		}
+		}*/
 	}
 }
