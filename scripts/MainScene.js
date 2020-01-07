@@ -54,6 +54,30 @@ class MainScene extends Phaser.Scene {
             new AbilitiesBar(this, 189, 512),
             new AbilitiesBar(this, 581, 512)
         ];
+        this.abilities_bars[0].on('click', function(ability){
+            if (ability.get_is_ready()){
+                ability.execute();
+                for (let i = 0; i < this.abilities_bars[0].actor.abilities.length; ++i){
+                    if (this.abilities_bars[0].actor.abilities[i] !== null){
+                        if (this.abilities_bars[0].actor.abilities[i].cooldown < 1000){
+                            this.abilities_bars[0].actor.abilities[i].set_cooldown(1000);
+                        }
+                    }
+                }
+            }
+        }.bind(this));
+        this.abilities_bars[1].on('click', function(ability){
+            if (ability.get_is_ready()){
+                ability.execute();
+                for (let i = 0; i < this.abilities_bars[1].actor.abilities.length; ++i){
+                    if (this.abilities_bars[1].actor.abilities[i] !== null){
+                        if (this.abilities_bars[1].actor.abilities[i].cooldown < 1000){
+                            this.abilities_bars[1].actor.abilities[i].set_cooldown(1000);
+                        }
+                    }
+                }
+            }
+        }.bind(this));
 		this.abilities_bars[0].set_actor(this.actors[0]);
         this.abilities_bars[1].set_actor(this.actors[1]);
         

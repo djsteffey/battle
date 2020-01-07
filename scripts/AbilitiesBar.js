@@ -1,10 +1,65 @@
-class AbilitiesBarAbility extends Phaser.GameObjects.Sprite{
-    constructor(scene, x, y, sheet, index){
+class AbilitiesBarAbility extends Phaser.GameObjects.Container{
+    constructor(scene, x, y, sheet, index, ability){
         // super me
-        super(scene, x, y, sheet, index);
-
-        // add to the scene
+        super(scene, x, y);
         scene.add.existing(this);
+
+        // save the ability
+        this.ability = ability;
+
+        // add to the sprite icon
+        this.sprite = new Phaser.GameObjects.Sprite(scene, x, y, sheet, index);
+        this.sprite.setDisplaySize(64, 64);
+        this.sprite.setOrigin(.5, .5);
+        this.sprite.setPosition(32, 32);
+        this.add(this.sprite);
+
+        // no tween yet
+        this.tween = null;
+
+        // the shading
+        this.shading = scene.add.graphics();
+        this.add(this.shading);
+
+        // register handler for clicking on the sprite
+        this.sprite.setInteractive();
+        this.sprite.on('pointerdown', function(){
+            // check if ready
+            if (this.ability.get_is_ready()){
+                // it is ready; stop the tween, set the size and emit the click
+                if (this.tween !== null){
+                    this.tween.remove();
+                    this.tween = null;
+                }
+                this.sprite.setDisplaySize(64, 64);
+                this.emit('click', this.ability);
+            }
+        }.bind(this));
+    }
+
+    update(){
+        if (this.ability !== null){
+            this.shading.clear();
+            if (this.ability.get_is_ready() === false){
+                this.shading.fillStyle(0x000000, 0.75);
+                let percent_ready = this.ability.get_ready_percent();
+                this.shading.fillRect(0, 0, 64, 64 * (1 - percent_ready));
+            }
+            else{
+                if (this.tween === null){
+                    // tween the sprite
+                    this.tween = this.scene.tweens.add({
+                        targets: [this.sprite],
+                        scale: 2.15,
+                        ease: 'Linear',
+                        duration: 250,
+                        yoyo: true,
+                        repeat: -1,
+                        callbackScope: this
+                    });
+                }
+            }
+        }
     }
 }
 
@@ -31,11 +86,6 @@ class AbilitiesBar extends Phaser.GameObjects.Container{
         // icons
         this.icons = null;
 
-
-        // icons shading
-        this.icons_shading = null;
-
-
 		// no initial actor
 		this.actor = null;
 		
@@ -51,27 +101,14 @@ class AbilitiesBar extends Phaser.GameObjects.Container{
 		this.background.lineStyle(2, this.background_color, this.background_alpha);
 		this.background.strokeRect(0, 0, this.width, this.height);
 
-		if (this.actor != null){
-			for (let i = 0; i < this.actor.abilities.length; ++i){
-				if (this.actor.abilities[i] !== null){
-					// draw ability
-					if (this.actor.abilities[i].get_is_ready()){
-                        this.icons[i].setTint(0xffffff);
-					}
-					else{
-                        this.icons[i].setTint(0x808080);
-					}
-
-                    // draw shading over the cooldown portion
-                    this.icons_shading[i].clear();
-					if (this.actor.abilities[i].get_is_ready() === false){
-						this.icons_shading[i].fillStyle(0x000000, 0.75);
-						let percent_ready = this.actor.abilities[i].get_ready_percent();
-						this.icons_shading[i].fillRect(8 + (i * (8 + 64)), 8, 64, 64 * (1 - percent_ready));
-                    }
-				}
-			}
-		}
+        // update icons if we have them
+        if (this.icons !== null){
+            for (let i = 0; i < this.icons.length; ++i){
+                if (this.icons[i] !== null){
+                    this.icons[i].update();
+                }
+            }
+        }
 	}
 	
 	set_actor(actor){
@@ -87,43 +124,30 @@ class AbilitiesBar extends Phaser.GameObjects.Container{
             }
         }
 
-        // remove existing shading icons
-        if (this.icons_shading !== null){
-            for (let i = 0; i < this.icons_shading.length; ++i){
-                if (this.icons_shading[i] !== null){
-                    this.icons_shading[i].remove();
+        // create the new icons
+        this.icons = [];
+        if (this.actor !== null){
+            for (let i = 0; i < this.actor.abilities.length; ++i){
+                if (this.actor.abilities[i] !== null){
+                    let icon = new AbilitiesBarAbility(this.scene, 0, 0, 'icons', i, this.actor.abilities[i]);
+                    icon.on('click', function(ability){
+                        // make sure the ability is ready
+                        if (ability.get_is_ready()){
+                            // emit the click
+                            this.emit('click', ability);
+                        }
+                    }.bind(this));
+                    this.icons.push(icon);
+                }
+                else{
+                    this.icons.push(null);
                 }
             }
         }
-
-        // create the new icons
-        this.icons = [];
-        for (let i = 0; i < this.actor.abilities.length; ++i){
-            if (this.actor.abilities[i] !== null){
-                this.icons.push(new Phaser.GameObjects.Sprite(this.scene, 0, 0, 'icons', i));
-            }
-            else{
-                this.icons.push(null);
-            }
-        }
         for (let i = 0; i < this.icons.length; ++i){
             if (this.icons[i] !== null){
-                this.icons[i].setDisplaySize(64, 64);
-                this.icons[i].setOrigin(0, 0);
                 this.icons[i].setPosition(8 + (i * (8 + 64)), 8);
                 this.add(this.icons[i]);
-            }
-        }
-
-        // create new icons shading
-        this.icons_shading = [];
-        for (let i = 0; i < this.icons.length; ++i){
-            if (this.icons[i] !== null){
-                this.icons_shading.push(this.scene.add.graphics());
-                this.add(this.icons_shading[i]);
-            }
-            else{
-                this.icons_shading.push(null);
             }
         }
 

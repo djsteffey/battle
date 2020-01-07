@@ -25,11 +25,12 @@ class Actor{
 
 		// todo make better ai
         // find the first ability that is ready and execute it
+        /*
         let r = get_random_int(0, 3);
         if (this.abilities[r] !== null){
             if (this.abilities[r].get_is_ready()){
                 this.abilities[r].execute();
             }
-        }
+        }*/
 	}
 }

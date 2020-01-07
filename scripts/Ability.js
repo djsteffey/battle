@@ -31,7 +31,12 @@ class Ability{
 
 	get_is_ready(){
 		return this.is_ready;
-	}
+    }
+    
+    set_cooldown(cooldown){
+        this.cooldown = cooldown;
+        this.is_ready = false;
+    }
 }
 
 class AbilityAttack extends Ability{
