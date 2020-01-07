@@ -31,15 +31,5 @@ class Actor{
                 this.abilities[r].execute();
             }
         }
-/*		if (get_random_int(0, 100) < 10){
-			for (let i = 0; i < this.abilities.length; ++i){
-				if (this.abilities[i] !== null){
-					if (this.abilities[i].get_is_ready()){
-						this.abilities[i].execute();
-						break;
-					}
-				}
-			}
-		}*/
 	}
 }

@@ -1,3 +1,13 @@
+class AbilitiesBarAbility extends Phaser.GameObjects.Sprite{
+    constructor(scene, x, y, sheet, index){
+        // super me
+        super(scene, x, y, sheet, index);
+
+        // add to the scene
+        scene.add.existing(this);
+    }
+}
+
 class AbilitiesBar extends Phaser.GameObjects.Container{
 	// build me !!!
 	constructor(scene, x, y){
