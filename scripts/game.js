@@ -5,6 +5,7 @@ new Phaser.Game({
 	backgroundColor: '#000000',
 	pixelArt: true,
 	scene: [new MainScene()],
-	parent: 'game'
+    parent: 'game',
+    type: Phaser.WEBGL
 });
 

@@ -9,7 +9,10 @@ class MainScene extends Phaser.Scene {
 
 	preload() {
 		// load the actors sprite sheet
-		this.load.spritesheet('actors', 'assets/entities_24x24.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet('actors', 'assets/entities_24x24.png', { frameWidth: 24, frameHeight: 24 });
+
+        // ability icons
+        this.load.spritesheet('icons', 'assets/icons.png', { frameWidth: 32, frameHeight: 32 });
 	}
 
 	create() {
@@ -52,7 +55,10 @@ class MainScene extends Phaser.Scene {
             new AbilitiesBar(this, 581, 512)
         ];
 		this.abilities_bars[0].set_actor(this.actors[0]);
-		this.abilities_bars[1].set_actor(this.actors[1]);
+        this.abilities_bars[1].set_actor(this.actors[1]);
+        
+
+
 	}
 	
 	update() {
@@ -80,6 +86,6 @@ class MainScene extends Phaser.Scene {
 		}
 
 		// debug text
-		this.debug_text.setText('debug text');
+//		this.debug_text.setText(JSON.stringify(this.game.renderer));
 	}
 }

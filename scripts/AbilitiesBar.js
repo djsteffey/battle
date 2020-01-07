@@ -16,7 +16,23 @@ class AbilitiesBar extends Phaser.GameObjects.Container{
 		
 		// create the bar and the box
 		this.background = scene.add.graphics();
-		this.add(this.background);
+        this.add(this.background);
+        
+        // icons
+        this.icons = [
+            new Phaser.GameObjects.Sprite(scene, 0, 0, 'icons', 0),
+            new Phaser.GameObjects.Sprite(scene, 0, 0, 'icons', 1),
+            new Phaser.GameObjects.Sprite(scene, 0, 0, 'icons', 2),
+            new Phaser.GameObjects.Sprite(scene, 0, 0, 'icons', 3)
+        ];
+        for (let i = 0; i < this.icons.length; ++i){
+            this.icons[i].setDisplaySize(64, 64);
+            this.icons[i].setOrigin(0, 0);
+            this.icons[i].setPosition(8 + (i * (8 + 64)), 8);
+            this.icons[i].setTint(0x101010);
+            this.add(this.icons[i]);
+        }
+
 
 		// no initial actor
 		this.actor = null;
@@ -39,19 +55,23 @@ class AbilitiesBar extends Phaser.GameObjects.Container{
 				if (this.actor.abilities[i] !== null){
 					// draw ability
 					if (this.actor.abilities[i].get_is_ready()){
-						this.background.fillStyle(0x00ff00, 1);
+                        this.icons[i].tint = 0x555555;
+//						this.background.fillStyle(0x00ff00, 1);
 					}
 					else{
-						this.background.fillStyle(0x008000, 1);
+                        this.icons[i].tint = 0x555555;
+//						this.background.fillStyle(0x008000, 1);
 					}
-					this.background.fillRect(8 + (i * (8 + 64)), 8, 64, 64);
+//					this.background.fillRect(8 + (i * (8 + 64)), 8, 64, 64);
 
-					// draw shading over the cooldown portion
+                    // draw shading over the cooldown portion
+                    /*
 					if (this.actor.abilities[i].get_is_ready() === false){
 						this.background.fillStyle(0x000000, 0.75);
 						let percent_ready = this.actor.abilities[i].get_ready_percent();
 						this.background.fillRect(8 + (i * (8 + 64)), 8, 64, 64 * (1 - percent_ready));
-					}
+                    }*/
+                    
 				}
 			}
 		}
