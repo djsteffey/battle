@@ -33,24 +33,20 @@ class MainScene extends Phaser.Scene {
 			}
 		);
 		
-		// actors
-		this.actors = [
-            new Actor('djs 00'),
-            new Actor('djs 01'),
-            new Actor('djs 02'),
-            new Actor('other 00'),
-            new Actor('other 01'),
-            new Actor('other 02')
-		];
-		
+        // teams
+        this.teams = [
+            new Team('team 00', [new Actor('djs 00'), new Actor('djs 00'), new Actor('djs 00')]),
+            new Team('team 01', [new Actor('other 00'), new Actor('other 00'), new Actor('other 00')]),
+        ];
+        
 		// renderers
 		this.actor_renderers = [
-            new ActorRenderer(this, 325, 224, this.actors[0]),
-            new ActorRenderer(this, 64, 100, this.actors[1]),
-            new ActorRenderer(this, 64, 348, this.actors[2]),
-            new ActorRenderer(this, 581, 224, this.actors[3]),
-            new ActorRenderer(this, 581, 224, this.actors[4]),
-            new ActorRenderer(this, 581, 224, this.actors[5])
+            new ActorRenderer(this, 325, 224, this.teams[0].actors[0]),
+            new ActorRenderer(this, 64, 100, this.teams[0].actors[1]),
+            new ActorRenderer(this, 64, 348, this.teams[0].actors[2]),
+            new ActorRenderer(this, 581, 224, this.teams[1].actors[0]),
+            new ActorRenderer(this, 581, 224, this.teams[1].actors[1]),
+            new ActorRenderer(this, 581, 224, this.teams[1].actors[2])
         ];
 
         // abilities bar
@@ -58,9 +54,11 @@ class MainScene extends Phaser.Scene {
             new AbilitiesBar(this, 189, 512),
             new AbilitiesBar(this, 581, 512)
         ];
+
+        // ability on bar 0 clicked
         this.abilities_bars[0].on('click', function(ability){
             if (ability.get_is_ready()){
-                ability.execute();
+                ability.execute(this.teams[0], this.teams[1]);
                 for (let i = 0; i < this.abilities_bars[0].actor.abilities.length; ++i){
                     if (this.abilities_bars[0].actor.abilities[i] !== null){
                         if (this.abilities_bars[0].actor.abilities[i].cooldown < 1000){
@@ -70,9 +68,11 @@ class MainScene extends Phaser.Scene {
                 }
             }
         }.bind(this));
+
+        // ability on bar 1 clicked
         this.abilities_bars[1].on('click', function(ability){
             if (ability.get_is_ready()){
-                ability.execute();
+                ability.execute(this.teams[1], this.teams[0]);
                 for (let i = 0; i < this.abilities_bars[1].actor.abilities.length; ++i){
                     if (this.abilities_bars[1].actor.abilities[i] !== null){
                         if (this.abilities_bars[1].actor.abilities[i].cooldown < 1000){
@@ -82,8 +82,8 @@ class MainScene extends Phaser.Scene {
                 }
             }
         }.bind(this));
-		this.abilities_bars[0].set_actor(this.actors[0]);
-        this.abilities_bars[1].set_actor(this.actors[1]);
+		this.abilities_bars[0].set_actor(this.teams[0].actors[0]);
+        this.abilities_bars[1].set_actor(this.teams[1].actors[1]);
 	}
 	
 	update() {
@@ -98,9 +98,9 @@ class MainScene extends Phaser.Scene {
 			// clear delta
 			this.accumulated_delta_ms -= UPDATE_RATE;
 			
-			// update actors
-			for (let i = 0; i < this.actors.length; ++i){
-				this.actors[i].update(UPDATE_RATE);
+            // update teams
+			for (let i = 0; i < this.teams.length; ++i){
+				this.teams[i].update(UPDATE_RATE);
 			}
 			for (let i = 0; i < this.actor_renderers.length; ++i){
 				this.actor_renderers[i].update();

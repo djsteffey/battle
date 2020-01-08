@@ -48,6 +48,6 @@ class AbilityAttack extends Ability{
 		super.execute();
 
 		// todo damage the lead of the other team
-
+        enemy_team[0].stats.hp -= 1;
 	}
 }
