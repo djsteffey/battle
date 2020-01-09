@@ -51,3 +51,18 @@ class AbilityAttack extends Ability{
         enemy_team[0].stats.hp -= 1;
 	}
 }
+
+class AbilitySwap extends Ability{
+    constructor(){
+        super('Swap', 5000);
+    }
+
+    execute(friendly_team, enemy_team){
+        super.execute();
+
+        // swap lead with one of the others
+        let temp = friendly_team.actors[0];
+        friendly_team.actors[0] = friendly_team.actors[1];
+        friendly_team.actors[1] = temp;
+    }
+}
