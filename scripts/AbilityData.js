@@ -48,11 +48,19 @@ class AbilityDataAttack extends AbilityData{
 		super.execute();
 
 		// todo damage the lead of the other team
+<<<<<<< HEAD:scripts/AbilityData.js
 		enemy_team.actors_data[0].damage(1);
 	}
 }
 
 class AbilityDataSwap extends AbilityData{
+=======
+        enemy_team[0].stats.hp -= 1;
+	}
+}
+
+class AbilitySwap extends Ability{
+>>>>>>> 2fcdc92bf250c244d0a674cf065a2623fa3b4957:scripts/Ability.js
     constructor(){
         super('Swap', 5000);
     }
