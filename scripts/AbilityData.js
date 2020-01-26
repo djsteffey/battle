@@ -1,4 +1,4 @@
-class Ability{
+class AbilityData{
 	constructor(name, cooldown){
 		this.name = name;
 		this.cooldown = cooldown;
@@ -31,18 +31,38 @@ class Ability{
 
 	get_is_ready(){
 		return this.is_ready;
-	}
+    }
+    
+    set_cooldown(cooldown){
+        this.cooldown = cooldown;
+        this.is_ready = false;
+    }
 }
 
-class AbilityAttack extends Ability{
+class AbilityDataAttack extends AbilityData{
 	constructor(){
-		super('Attack', 2000);
+		super('Attack', 1000);
 	}
 
 	execute(friendly_team, enemy_team){
 		super.execute();
 
 		// todo damage the lead of the other team
-
+		enemy_team.actors_data[0].damage(1);
 	}
+}
+
+class AbilityDataSwap extends AbilityData{
+    constructor(){
+        super('Swap', 5000);
+    }
+
+    execute(friendly_team, enemy_team){
+        super.execute();
+
+        // swap lead with one of the others
+        let temp = friendly_team.actors[0];
+        friendly_team.actors[0] = friendly_team.actors[1];
+        friendly_team.actors[1] = temp;
+    }
 }
