@@ -6,6 +6,5 @@ new Phaser.Game({
 	pixelArt: true,
 	scene: [new SceneMain()],
     parent: 'game',
-    type: Phaser.WEBGL
+    type: Phaser.AUTO
 });
-
