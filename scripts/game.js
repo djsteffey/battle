@@ -1,3 +1,4 @@
+
 // create the game
 new Phaser.Game({
 	width: 1066,
@@ -5,6 +6,14 @@ new Phaser.Game({
 	backgroundColor: '#000000',
 	pixelArt: true,
 	scene: [new SceneMain()],
-    parent: 'game',
-    type: Phaser.AUTO
+	parent: 'game',
+	plugins: {
+		scene: [
+			{
+				key: 'rexUI',
+                plugin: rexuiplugin,
+                mapping: 'rexUI'
+			}
+		]
+	}
 });
