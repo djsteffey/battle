@@ -73,7 +73,7 @@ class Kingdom{
 		this.actors = [];
 		this.teams = [];
 		this.available_quests = [];
-		this.quests_in_progress = [];
+		this.active_quests = [];
 	}
 
 	update(delta_ms){

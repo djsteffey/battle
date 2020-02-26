@@ -1,13 +1,4 @@
-class CUiQuestListContainer extends RexPlugins.UI.ScrollablePanel{
-    constructor(scene){
-        super(
-            scene,
-            {
-                
-            }
-        )
-    }
-}
+
 
 class UiQuestList extends RexPlugins.UI.Tabs {
     constructor(scene, active_quests, available_quests) {
@@ -15,19 +6,19 @@ class UiQuestList extends RexPlugins.UI.Tabs {
             scene,
             {
                 // location of the list
-                x: 400,
-                y: 300,
+                x: 0,
+                y: 0,
 
                 // main panel
                 panel: scene.rexUI.add.gridTable({
                     // panel background
-                    background: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_PRIMARY),
+                    background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, COLOR_PRIMARY).setStrokeStyle(2, COLOR_LIGHT, 1),
 
                     // table characteristics
                     table: {
                         width: 600,
                         height: 400,
-                        cellWidth: 120,
+                        cellWidth: 596,
                         cellHeight: 60,
                         columns: 1,
                         mask: {
@@ -37,7 +28,7 @@ class UiQuestList extends RexPlugins.UI.Tabs {
 
                     // slider characteristics
                     slider: {
-                        track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK),
+                        track: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, COLOR_DARK),
                         thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT),
                     },
                   
@@ -51,11 +42,9 @@ class UiQuestList extends RexPlugins.UI.Tabs {
                         return scene.rexUI.add.label({
                             width: width,
                             height: height,
-
                             background: scene.rexUI.add.roundRectangle(0, 0, 20, 20, 0).setStrokeStyle(2, COLOR_DARK),
                             icon: scene.rexUI.add.roundRectangle(0, 0, 20, 20, 10, item.color),
-                            text: scene.add.text(0, 0, item.id),
-
+                            text: scene.add.text(0, 0, item.name),
                             space: {
                                 icon: 10,
                                 left: 15
@@ -69,7 +58,7 @@ class UiQuestList extends RexPlugins.UI.Tabs {
 					scene.rexUI.add.label({
 						width: 150,
 						height:40,
-						background: scene.rexUI.add.roundRectangle(0, 0, 50, 50, { tr: 20, tl: 20}, COLOR_DARK),
+						background: scene.rexUI.add.roundRectangle(0, 0, 50, 50, { tr: 20, tl: 20}, COLOR_DARK).setStrokeStyle(2, COLOR_LIGHT, 1),
 						text: scene.add.text(0, 0, 'Active', {
 							fontSize: '18pt'
 						}),
@@ -80,7 +69,7 @@ class UiQuestList extends RexPlugins.UI.Tabs {
 					scene.rexUI.add.label({
 						width: 150,
 						height:40,
-						background: scene.rexUI.add.roundRectangle(0, 0, 50, 50, {tr:20, tl:20}, COLOR_DARK),
+						background: scene.rexUI.add.roundRectangle(0, 0, 50, 50, {tr:20, tl:20}, COLOR_DARK).setStrokeStyle(2, COLOR_LIGHT, 1),
 						text: scene.add.text(0, 0, 'Available', {
 							fontSize: '18pt'
 						}),
@@ -101,38 +90,43 @@ class UiQuestList extends RexPlugins.UI.Tabs {
         // layout the tabs control
         this.layout();
 
-        // save the active quests
+        // save the quests
         this.active_quests = active_quests;
+		this.available_quests = available_quests;
 
         // not currently a prev button
-        this.m_prevTypeButton = null;
+        this.previous_button = null;
 
         // callbacks on the active/available buttons
         this.on('button.click', function (button, groupName, index){
             // do nothing if the button is the same as the prev
-            if (button === this._prevTypeButton){
+            if (button === this.previous_button){
                 return;
             }
 
             // ensure we are talking about the top buttons
-            switch (groupName) {                    
-                case 'top':
-                    // un-highlight the previous clicked button
-                    if (this._prevTypeButton) {
-                        this._prevTypeButton.getElement('background').setFillStyle(COLOR_DARK)
-                    }
+			if (groupName !== 'top'){
+				return;
+			}
 
-                    // highlight the new clicked button
-                    button.getElement('background').setFillStyle(COLOR_PRIMARY);
+			// un-highlight the previous clicked button
+			if (this.previous_button) {
+				this.previous_button.getElement('background').setFillStyle(COLOR_DARK)
+			}
 
-                    // save the button
-                    this._prevTypeButton = button;
-                    break;
-            }
+			// save the button
+			this.previous_button = button;
+			
+			// highlight the new clicked button
+			button.getElement('background').setFillStyle(COLOR_PRIMARY);
 
             // todo, switch between active and available
-            var items = this.active_quests
-            this.getElement('panel').setItems(items).scrollToTop();
+			if (button.text === 'Active'){
+				this.getElement('panel').setItems(this.active_quests).scrollToTop();
+			}
+			else{
+				this.getElement('panel').setItems(this.available_quests).scrollToTop();
+			}
         }, this);
 
         // callbacks for cell interactions
@@ -150,5 +144,75 @@ class UiQuestList extends RexPlugins.UI.Tabs {
                     .setStrokeStyle(2, COLOR_DARK)
                     .setDepth(0);
             }, this);
+			
+		// simulate click on active
+		this.emitButtonClick('top', 0);
+    }
+}
+
+class UiQuestListContainer extends RexPlugins.UI.Sizer{
+    constructor(scene, active_quests, available_quests){
+		// super me
+        super(scene, scene.sys.game.canvas.width / 2, scene.sys.game.canvas.height / 2, 0, 0, 'y');
+		
+		// color scheme
+		this.COLOR_DARK = 0x0000ff;
+		this.COLOR_LIGHT = 0x8080ff;
+		this.COLOR_PRIMARY = 0x5050ff;
+		
+		// save quests
+		this.active_quests = active_quests;
+		this.available_quests = available_quests;
+		
+		// add a background
+		this.background = scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_PRIMARY).setStrokeStyle(4, this.COLOR_LIGHT, 1);
+		this.addBackground(this.background);
+		
+		// add the quests label
+		this.label = scene.rexUI.add.label({
+			orientation: 'y',
+			text: scene.add.text(0, 0, 'QUESTS', { fontSize: '38pt'})
+		});
+		this.add(this.label);
+		
+		// add the tab control for the list of quests
+		this.quest_list = new UiQuestList(scene, active_quests, available_quests);
+		this.add(this.quest_list, 0, 'center', 15, false);
+		
+		// add a close button
+		this.buttons = scene.rexUI.add.buttons({
+			orientation: 'x',
+			buttons:[
+				scene.rexUI.add.label({
+					width: 200,
+					height: 40,
+					background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, COLOR_LIGHT).setStrokeStyle(2, this.COLOR_LIGHT, 1),
+					text: scene.add.text(0, 0, 'Close', {
+						fontSize: 24
+					}),
+					space: {
+						left: 60,
+						right: 0,
+					}
+				})
+			]
+		});
+		this.add(this.buttons, 0, 'center', 15, false);
+
+		
+		// add the mouse events for the close button
+		this.buttons
+			.on('button.over', function(button, index, pointer, event){
+				button.getElement('background').setFillStyle(this.COLOR_DARK);
+				console.log('here');
+			}, this)
+			.on('button.out', function(button, index, pointer, event){
+				button.getElement('background').setFillStyle(this.COLOR_LIGHT);
+				console.log('here');
+			}, this);
+		
+		
+		// layout now
+		this.layout();
     }
 }
