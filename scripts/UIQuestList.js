@@ -1,3 +1,14 @@
+class CUiQuestListContainer extends RexPlugins.UI.ScrollablePanel{
+    constructor(scene){
+        super(
+            scene,
+            {
+                
+            }
+        )
+    }
+}
+
 class UiQuestList extends RexPlugins.UI.Tabs {
     constructor(scene, active_quests, available_quests) {
         super(
