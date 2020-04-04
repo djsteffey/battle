@@ -37,43 +37,16 @@ class Team{
 	}
 }
 
-class Quest{
-	constructor(name, duration, difficulty, reward, time_to_accept){
-		this.name = name;
-		this.initial_duration = duration;
-		this.duration = duration;
-		this.difficulty = difficulty;
-		this.reward = reward;
-		this.time_to_accept = time_to_accept;
-		this.in_progress = false;
-	}
-
-	update(delta_ms){
-		if (this.in_progress){
-			this.duration -= delta_ms;
-			if (this.duration <= 0){
-				// complete
-			}		
-		}
-		else{
-			this.time_to_accept -= delta_ms;
-			if (this.time_to_accept <= 0){
-				// out of time
-			}
-		}
-	}
-
-	begin(){
-		this.in_progress = true;
+class Battle{
+	constructor(teams){
+		this.teams = teams;
 	}
 }
 
-class Kingdom{
+class GameState{
 	constructor(){
-		this.actors = [];
 		this.teams = [];
-		this.available_quests = [];
-		this.active_quests = [];
+		this.battles = [];
 	}
 
 	update(delta_ms){
@@ -81,8 +54,24 @@ class Kingdom{
 	}
 }
 
-class System{
-	constructor(){
-		this.kingdoms = [];
-	}
+const DATA = {
+	colors:{
+		BUTTON_NORMAL: 0x123456,
+		BUTTON_HOVER: 0x234567,
+		BUTTON_HOVER_EDGE: 0xffffff
+	},
+	classes:[
+		{
+			name: 'Warrior',
+			graphics_index: 22
+		},
+		{
+			name: 'Mage',
+			graphics_index: 23
+		},
+		{
+			name: 'Rogue',
+			graphics_index: 24
+		},
+	]
 }

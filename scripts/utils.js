@@ -46,3 +46,4 @@ function create_floating_text(scene, x, y, message, tint, size, bold, duration) 
     });
     return text;
 }
+
