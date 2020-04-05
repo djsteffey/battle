@@ -93,7 +93,7 @@ class ClassSelector extends RexPlugins.UI.Sizer{
 					width: 128,
 					height: 128,
 					background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, DATA.colors.BUTTON_NORMAL),
-					icon: scene.add.sprite(0, 0, 'actors', DATA.classes[this.selected_index].graphics_index).setDisplaySize(128, 128)
+					icon: scene.add.sprite(0, 0, 'actors', DATA.clazzes[this.selected_index].graphics_index).setDisplaySize(128, 128)
 				}),
 				scene.rexUI.add.label({
 					width: 64,
@@ -111,7 +111,7 @@ class ClassSelector extends RexPlugins.UI.Sizer{
 					// clicked previous
 					this.selected_index -= 1;
 					if (this.selected_index < 0){
-						this.selected_index = DATA.classes.length - 1;
+						this.selected_index = DATA.clazzes.length - 1;
 					}
 				} break;
 				case 1:{
@@ -120,13 +120,13 @@ class ClassSelector extends RexPlugins.UI.Sizer{
 				case 2:{
 					// clicked next
 					this.selected_index += 1;
-					if (this.selected_index >= DATA.classes.length){
+					if (this.selected_index >= DATA.clazzes.length){
 						this.selected_index = 0;
 					}
 				} break;
 			}
-			this.selector.getButton(1).getElement('icon').setFrame(DATA.classes[this.selected_index].graphics_index);
-			this.information.text = DATA.classes[this.selected_index].name;
+			this.selector.getButton(1).getElement('icon').setFrame(DATA.clazzes[this.selected_index].graphics_index);
+			this.information.text = DATA.clazzes[this.selected_index].name;
 		}, this)
 		.on('button.over', function(button, index, pointer, event){
 			button.getElement('background').setStrokeStyle(4, DATA.colors.BUTTON_HOVER_EDGE);
@@ -145,7 +145,7 @@ class ClassSelector extends RexPlugins.UI.Sizer{
 			width: 64,
 			height: 64,
 			background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x00ff00),
-			text: scene.add.text(0, 0, DATA.classes[this.selected_index].name, {
+			text: scene.add.text(0, 0, DATA.clazzes[this.selected_index].name, {
 				fontSize: 32
 			})
 		})
@@ -177,39 +177,90 @@ class PartyClassSelector extends RexPlugins.UI.Sizer{
 }
 
 class BattleActorStatus extends RexPlugins.UI.Sizer{
-	constructor(scene){
+	constructor(scene, actor = null){
 		super(scene, 0, 0, 0, 0, 'v');
 		
-		// selected class index
-		this.selected_index = 0;
+		// font size for text components
+		const font_size = 32;
+
 		
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
 
 		// hp bar
-		this.hp = new ProgressBar(scene, 0, 0, 192, 48, 2, 32, 25, 100);
+		this.hp = new ProgressBar(scene, 0, 0, 256, 48, 2, font_size, 0, 0);
 		this.hp.set_fill_color(0x00ff00, 1);
 		this.hp.set_empty_color(0xff0000, 1);
 		this.add(this.hp, 1, 'center', 4);
 
 		// class name
-		this.text = scene.add.text(
+		this.class_name = scene.add.text(
 			0,
 			0,
-			'0/0',
+			'CLS:',
 			{
-                fontSize: this.font_size,
+                fontSize: font_size,
                 fontStyle: 'bold',
 				fill: '#ffffff',
                 align: 'center'
 			}
 		);
-		this.text.setOrigin(0.5);
+		this.class_name.setOrigin(0.5);
+		this.add(this.class_name, 1, 'left', 4);
+		
+		// speed
+		this.speed = scene.add.text(
+			0,
+			0,
+			'SPD:',
+			{
+                fontSize: font_size,
+                fontStyle: 'bold',
+				fill: '#ffffff',
+                align: 'center'
+			}
+		);
+		this.speed.setOrigin(0.5);
+		this.add(this.speed, 1, 'left', 4);
+		
+		// power
+		this.power = scene.add.text(
+			0,
+			0,
+			'PWR:',
+			{
+                fontSize: font_size,
+                fontStyle: 'bold',
+				fill: '#ffffff',
+                align: 'center'
+			}
+		);
+		this.power.setOrigin(0.5);
+		this.add(this.power, 1, 'left', 4);
 
 		// layout
 		this.layout();
-
-		this.x = 400;
-		this.y = 300;
+		
+		// set the actor
+		this.set_actor(actor);
+	}
+	
+	set_actor(actor){
+		this.actor = actor;
+		if (this.actor !== null){
+			this.hp.set_value(this.actor.stats.effective.hp);
+			this.hp.set_max_value(this.actor.stats.effective.hp_max);
+			this.class_name.text = 'CLS: ' + this.actor.clazz.name;
+			this.speed.text = 'SPD: ' + this.actor.stats.effective.speed;
+			this.power.text = 'PWR: '  + this.actor.stats.effective.power;
+		}
+		else{
+			this.hp.set_value(0);
+			this.hp.set_max_value(0);
+			this.class_name.text = 'CLS:';
+			this.speed.text = 'SPD:';
+			this.power.text = 'PWR:';
+		}
+		this.layout();
 	}
 }

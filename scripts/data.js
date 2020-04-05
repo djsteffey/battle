@@ -23,11 +23,33 @@ class Ability{
 }
 
 class Actor{
-	constructor(name){
-		this.name = name;
+	constructor(clazz_index){
+		this.clazz = DATA.clazzes[clazz_index];
 		this.abilities = [];
 		this.weapon = null;
 		this.armor = null;
+		this.stats = {
+			base:{
+				hp: this.clazz.health,
+				hp_max: this.clazz.health,
+				speed: this.clazz.speed,
+				power: this.clazz.power
+			},
+			effective:{
+				hp: 0,
+				hp_max: 0,
+				speed: 0,
+				power: 0
+			}
+		}
+		this.recompute_effective_stats();
+	}
+	
+	recompute_effective_stats(){
+		this.stats.effective.hp = this.stats.base.hp;
+		this.stats.effective.hp_max = this.stats.base.hp_max;
+		this.stats.effective.speed = this.stats.base.speed;
+		this.stats.effective.power = this.stats.base.power;
 	}
 }
 
@@ -60,18 +82,27 @@ const DATA = {
 		BUTTON_HOVER: 0x234567,
 		BUTTON_HOVER_EDGE: 0xffffff
 	},
-	classes:[
+	clazzes:[
 		{
 			name: 'Warrior',
-			graphics_index: 22
+			graphics_index: 22,
+			health: 10,
+			speed: 1,
+			power: 3
 		},
 		{
 			name: 'Mage',
-			graphics_index: 23
+			graphics_index: 23,
+			health: 7,
+			speed: 2,
+			power: 2
 		},
 		{
 			name: 'Rogue',
-			graphics_index: 24
+			graphics_index: 24,
+			health: 8,
+			speed: 3,
+			power: 1
 		},
 	]
 }

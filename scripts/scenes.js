@@ -107,13 +107,26 @@ class SceneTeamSelect extends Phaser.Scene {
 		buttons.on('button.click', function(button, index, pointer, event){
 			switch (index){
 				case 0:{
-					// ready
+					// ready; start the battle scene and pass the selected clazzes
 					this.scene.start('SceneBattle', {
-						selected:[
-							this.selector.selectors[0].selected_index,
-							this.selector.selectors[1].selected_index,
-							this.selector.selectors[2].selected_index
-						]
+						selected:{
+							teams:[
+								{
+									actors:[
+										this.selector.selectors[0].selected_index,
+										this.selector.selectors[1].selected_index,
+										this.selector.selectors[2].selected_index
+									]
+								},
+								{
+									actors:[
+										get_random_int(0, DATA.clazzes.length - 1),
+										get_random_int(0, DATA.clazzes.length - 1),
+										get_random_int(0, DATA.clazzes.length - 1)
+									]
+								}
+							]
+						}
 					});
 				} break;
 				case 1:{
@@ -147,6 +160,30 @@ class SceneBattle extends Phaser.Scene {
 	init(data){
 		console.log('SceneBattle::init(data)');
 		this.selected = data.selected;
+		
+		// make our team
+		this.teams = [
+			new Team([
+				new Actor(this.selected.teams[0].actors[0]),
+				new Actor(this.selected.teams[0].actors[1]),
+				new Actor(this.selected.teams[0].actors[2])
+			]),
+			new Team([
+				new Actor(this.selected.teams[1].actors[0]),
+				new Actor(this.selected.teams[1].actors[1]),
+				new Actor(this.selected.teams[1].actors[2])
+			]),
+		];
+	
+		// make our three actors status
+		this.actors_status = [
+			new BattleActorStatus(this, this.teams[0].actors[0]),
+			new BattleActorStatus(this, this.teams[0].actors[1]),
+			new BattleActorStatus(this, this.teams[0].actors[2])
+		];
+		this.actors_status[0].x = 200;
+		this.actors_status[0].y = 200;
+		
 	}
 
 	preload() {
