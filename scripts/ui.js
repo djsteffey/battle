@@ -11,21 +11,17 @@ class ProgressBar extends Phaser.GameObjects.Container{
 		this.height = height;
 		this.border_size = border_size;
 		this.font_size = font_size;
-		this.value = Math.round(value);
-		this.max_value = Math.round(max_value);
-		this.dirty = true;
+		this.value = value;
+		this.max_value = max_value;
 		
 		this.background = scene.rexUI.add.roundRectangle(0, 0, this.width, this.height, 4, 0x000000).setStrokeStyle(this.border_size, 0xffffff);
-		this.background.setOrigin(0.5);
-		this.bar = scene.rexUI.add.roundRectangle(0, 0, this.width / 2, this.height, 4, 0x80ff80);
-		this.bar.setOrigin(0.5);
+		this.bar = scene.rexUI.add.roundRectangle(0, 0, this.width, this.height, 4, 0x80ff80);
 		this.text = scene.add.text(
-			this.width / 2,
-			this.height / 2,
-			this.value + '/' + this.max_value,
+			0,
+			0,
+			'0/0',
 			{
                 fontSize: this.font_size,
-                fontFamily: 'Arial',
                 fontStyle: 'bold',
 				fill: '#ffffff',
                 align: 'center'
@@ -34,10 +30,39 @@ class ProgressBar extends Phaser.GameObjects.Container{
 		this.text.setOrigin(0.5);
 		this.add(this.background);
 		this.add(this.bar);
-		this.add(this.text);		
+		this.add(this.text);
+		this.set_value(value);
+		this.set_max_value(max_value);		
 	}
 	
-	update(){
+	set_fill_color(color, alpha){
+		this.bar.setFillStyle(color, alpha);
+	}
+
+	set_empty_color(color, alpha){
+		this.background.setFillStyle(color, alpha);
+	}
+
+	set_value(value){
+		this.value = Math.round(value);
+		this.bar.width = this.width * this.get_percent();
+		this.bar.x = -(this.width - this.bar.width) / 2;
+		this.text.text = this.value + '/' + this.max_value;
+	}
+
+	set_max_value(max_value){
+		this.max_value = Math.round(max_value);
+		this.bar.width = this.width * this.get_percent();
+		this.bar.x = -(this.width - this.bar.width) / 2;
+		this.text.text = this.value + '/' + this.max_value;
+	}
+
+	set_text_color(color){
+		this.text.setColor(color);
+	}
+
+	get_percent(){
+		return this.value / this.max_value;
 	}
 }
 
@@ -160,8 +185,31 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 		
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
-		this.add(new ProgressBar(scene, 0, 0, 256, 64, 2, 48, 50, 100));
-		
+
+		// hp bar
+		this.hp = new ProgressBar(scene, 0, 0, 192, 48, 2, 32, 25, 100);
+		this.hp.set_fill_color(0x00ff00, 1);
+		this.hp.set_empty_color(0xff0000, 1);
+		this.add(this.hp, 1, 'center', 4);
+
+		// class name
+		this.text = scene.add.text(
+			0,
+			0,
+			'0/0',
+			{
+                fontSize: this.font_size,
+                fontStyle: 'bold',
+				fill: '#ffffff',
+                align: 'center'
+			}
+		);
+		this.text.setOrigin(0.5);
+
+		// layout
 		this.layout();
+
+		this.x = 400;
+		this.y = 300;
 	}
 }
