@@ -108,6 +108,13 @@ class SceneTeamSelect extends Phaser.Scene {
 			switch (index){
 				case 0:{
 					// ready
+					this.scene.start('SceneBattle', {
+						selected:[
+							this.selector.selectors[0].selected_index,
+							this.selector.selectors[1].selected_index,
+							this.selector.selectors[2].selected_index
+						]
+					});
 				} break;
 				case 1:{
 					// cancel; go back to main
@@ -137,6 +144,11 @@ class SceneBattle extends Phaser.Scene {
 		console.log('SceneBattle::constructor()');
 	}
 
+	init(data){
+		console.log('SceneBattle::init(data)');
+		this.selected = data.selected;
+	}
+
 	preload() {
 		console.log('SceneBattle::preload()');
 	}
@@ -152,21 +164,34 @@ class SceneBattle extends Phaser.Scene {
 			},
 			orientation: 'y',
 			buttons:[
-				create_button(this, 'Exit', 256, 128, 64),
+				this.rexUI.add.label({
+					align: 'center',
+					width: 256,
+					height: 128,
+					background: this.rexUI.add.roundRectangle(0, 0, 0, 0, 4, DATA.colors.BUTTON_NORMAL),
+					text: this.add.text(0, 0, 'Exit', {
+						fontSize: 64
+					}),
+				})
 			]			
-		});
-		buttons.layout();
-		buttons.on('button.click', function(button, index, pointer, event){
-			if (button.text === 'Exit'){
-				this.scene.start('SceneMain');
+		})
+		.layout()
+		.on('button.click', function(button, index, pointer, event){
+			switch(index){
+				case 0:{
+					// exit
+					this.scene.start('SceneMain');
+				} break;
 			}
-		}, this);
-		buttons.on('button.over', function(button, index, pointer, event){
+		}, this)
+		.on('button.over', function(button, index, pointer, event){
 			button.getElement('background').setStrokeStyle(4, 0xffffff);
-		}, this);
-		buttons.on('button.out', function(button, index, pointer, event){
+		}, this)
+		.on('button.out', function(button, index, pointer, event){
 			button.getElement('background').setStrokeStyle();
 		}, this);
+
+		this.status = new BattleActorStatus(this);
     }	
 	
 	update() {

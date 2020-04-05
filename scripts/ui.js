@@ -1,3 +1,46 @@
+class ProgressBar extends Phaser.GameObjects.Container{
+	constructor(scene, x, y, width, height, border_size, font_size, value, max_value){
+		// super me
+		super(scene, x, y);
+		scene.add.existing(this);
+
+		// save passed values
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.border_size = border_size;
+		this.font_size = font_size;
+		this.value = Math.round(value);
+		this.max_value = Math.round(max_value);
+		this.dirty = true;
+		
+		this.background = scene.rexUI.add.roundRectangle(0, 0, this.width, this.height, 4, 0x000000).setStrokeStyle(this.border_size, 0xffffff);
+		this.background.setOrigin(0.5);
+		this.bar = scene.rexUI.add.roundRectangle(0, 0, this.width / 2, this.height, 4, 0x80ff80);
+		this.bar.setOrigin(0.5);
+		this.text = scene.add.text(
+			this.width / 2,
+			this.height / 2,
+			this.value + '/' + this.max_value,
+			{
+                fontSize: this.font_size,
+                fontFamily: 'Arial',
+                fontStyle: 'bold',
+				fill: '#ffffff',
+                align: 'center'
+			}
+		);
+		this.text.setOrigin(0.5);
+		this.add(this.background);
+		this.add(this.bar);
+		this.add(this.text);		
+	}
+	
+	update(){
+	}
+}
+
 class ClassSelector extends RexPlugins.UI.Sizer{
 	constructor(scene){
 		super(scene, 0, 0, 0, 0, 'v');
@@ -96,9 +139,29 @@ class PartyClassSelector extends RexPlugins.UI.Sizer{
 				centerY: '20%'
 			}
 		});
-		this.add(new ClassSelector(scene), 1, 'center', 8);
-		this.add(new ClassSelector(scene), 1, 'center', 8);
-		this.add(new ClassSelector(scene), 1, 'center', 8);
+		this.selectors = [
+			new ClassSelector(scene),
+			new ClassSelector(scene),
+			new ClassSelector(scene)
+		]
+		for (let i = 0; i < this.selectors.length; ++i){
+			this.add(this.selectors[i], 1, 'center', 8);
+		}
+		this.layout();
+	}
+}
+
+class BattleActorStatus extends RexPlugins.UI.Sizer{
+	constructor(scene){
+		super(scene, 0, 0, 0, 0, 'v');
+		
+		// selected class index
+		this.selected_index = 0;
+		
+		// background
+		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
+		this.add(new ProgressBar(scene, 0, 0, 256, 64, 2, 48, 50, 100));
+		
 		this.layout();
 	}
 }
