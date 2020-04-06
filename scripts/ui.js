@@ -182,7 +182,6 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 		
 		// font size for text components
 		const font_size = 24;
-
 		
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
@@ -266,5 +265,148 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 
 	update(){
 		this.set_actor(this.actor);
+	}
+}
+
+class BattleActionSelector extends RexPlugins.UI.Sizer{
+	constructor(scene, actor = null){
+		super(scene, 0, 0, 0, 0, 'h');
+
+		// background
+		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
+
+		// button size and font size for buttons
+		const font_size = 24;
+		const button_size = 96;
+
+		// now place inside this sizer the buttons
+		this.buttons = scene.rexUI.add.buttons({
+			orientation: 'h',
+			space: 4,
+			buttons:[
+				scene.rexUI.add.label({
+					align: 'center',
+					width: button_size,
+					height: button_size,
+					background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, DATA.colors.BUTTON_NORMAL),
+					text: scene.add.text(0, 0, '', {
+						fontSize: font_size
+					}),
+				}),
+				scene.rexUI.add.label({
+					align: 'center',
+					width: button_size,
+					height: button_size,
+					background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, DATA.colors.BUTTON_NORMAL),
+					text: scene.add.text(0, 0, '', {
+						fontSize: font_size
+					}),
+				}),
+				scene.rexUI.add.label({
+					align: 'center',
+					width: button_size,
+					height: button_size,
+					background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, DATA.colors.BUTTON_NORMAL),
+					text: scene.add.text(0, 0, '', {
+						fontSize: font_size
+					}),
+				}),
+				scene.rexUI.add.label({
+					align: 'center',
+					width: button_size,
+					height: button_size,
+					background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, DATA.colors.BUTTON_NORMAL),
+					text: scene.add.text(0, 0, 'S', {
+						fontSize: font_size
+					}),
+				}),
+				scene.rexUI.add.label({
+					align: 'center',
+					width: button_size,
+					height: button_size,
+					background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, DATA.colors.BUTTON_NORMAL),
+					text: scene.add.text(0, 0, 'S', {
+						fontSize: font_size
+					}),
+				})
+			]			
+		})
+		.on('button.click', function(button, index, pointer, event){
+			switch(index){
+				case 0:{
+					// ability 0
+				} break;
+				case 1:{
+					// ability 1
+				} break;
+				case 2:{
+					// ability 2
+				} break;
+				case 3:{
+					// swap
+				} break;
+				case 4:{
+					// surrender
+				} break;
+			}
+			this.emit('selection', index);
+		}, this)
+		.on('button.over', function(button, index, pointer, event){
+			button.getElement('background').setStrokeStyle(4, 0xffffff);
+		}, this)
+		.on('button.out', function(button, index, pointer, event){
+			button.getElement('background').setStrokeStyle();
+		}, this);
+		this.add(this.buttons, 1, 'center', 4);
+
+		// layout
+		this.layout();
+
+		// actor
+		this.set_actor(actor);
+	}
+
+	set_actor(actor){
+		this.actor = actor;
+		
+		if (this.actor !== null){
+			this.buttons.getButton(0).getElement('text').text = '' + this.actor.abilities[0].cooldown_remaining;
+			this.buttons.getButton(1).getElement('text').text = '' + this.actor.abilities[1].cooldown_remaining;
+			this.buttons.getButton(2).getElement('text').text = '' + this.actor.abilities[2].cooldown_remaining;
+		}
+		else{
+			this.buttons.getButton(0).getElement('text').text = '';
+			this.buttons.getButton(1).getElement('text').text = '';
+			this.buttons.getButton(2).getElement('text').text = '';
+		}
+		this.layout();
+	}
+
+	update(){
+		this.set_actor(this.actor);
+	}
+}
+
+class BattleActorSprite extends RexPlugins.UI.Sizer{
+	constructor(scene, actor){
+		super(scene, 0, 0, 0, 0, 'h');
+
+		// save actor
+		this.actor = actor;
+
+		// background
+		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
+
+		// the sprite
+		this.sprite = scene.add.sprite(0, 0, 'actors', actor.clazz.graphics_index);
+		this.sprite.setDisplaySize(128, 128);
+		this.add(this.sprite, 1, 'center', 4);
+
+		// layout
+		this.layout();
+	}
+
+	set_flip(x, y){
+		this.sprite.setFlip(x, y);
 	}
 }

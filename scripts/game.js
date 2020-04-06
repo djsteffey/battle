@@ -1,5 +1,5 @@
 // our game state
-const game_state = new GameState();
+//const game_state = new GameState();
 
 // create the game
 new Phaser.Game({
