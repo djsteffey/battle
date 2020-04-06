@@ -181,9 +181,14 @@ class SceneBattle extends Phaser.Scene {
 			new BattleActorStatus(this, this.teams[0].actors[1]),
 			new BattleActorStatus(this, this.teams[0].actors[2])
 		];
-		this.actors_status[0].x = 200;
-		this.actors_status[0].y = 200;
-		
+		this.actors_status[0].setAnchor({
+			centerX: '25%',
+			top: '2%'
+		});
+		this.actors_status[1].setAnchor({
+			centerX: '75%',
+			top: '2%'
+		});
 	}
 
 	preload() {

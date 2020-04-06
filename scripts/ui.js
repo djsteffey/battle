@@ -181,14 +181,14 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 		super(scene, 0, 0, 0, 0, 'v');
 		
 		// font size for text components
-		const font_size = 32;
+		const font_size = 24;
 
 		
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
 
 		// hp bar
-		this.hp = new ProgressBar(scene, 0, 0, 256, 48, 2, font_size, 0, 0);
+		this.hp = new ProgressBar(scene, 0, 0, 256, font_size + 8, 2, font_size, 0, 0);
 		this.hp.set_fill_color(0x00ff00, 1);
 		this.hp.set_empty_color(0xff0000, 1);
 		this.add(this.hp, 1, 'center', 4);
@@ -262,5 +262,9 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 			this.power.text = 'PWR:';
 		}
 		this.layout();
+	}
+
+	update(){
+		this.set_actor(this.actor);
 	}
 }
