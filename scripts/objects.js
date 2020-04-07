@@ -36,8 +36,9 @@ class Ability{
     }
 }
 
-class Actor{
+class Actor extends EventEmitter{
 	constructor(clazz_index){
+		super();
 		this.clazz = DATA.clazzes[clazz_index];
 		this.abilities = [
             new Ability(0),
@@ -71,11 +72,13 @@ class Actor{
     }
     
     damage(amount){
-        this.stats.effective.hp -= amount;
+		this.stats.effective.hp -= amount;
+		this.emit('damage', amount);
     }
 
     heal(amount){
-        this.stats.effective.hp += amount;
+		this.stats.effective.hp += amount;
+		this.emit('heal', amount);
     }
 }
 

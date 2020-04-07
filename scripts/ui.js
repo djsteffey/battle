@@ -391,8 +391,14 @@ class BattleActorSprite extends RexPlugins.UI.Sizer{
 	constructor(scene, actor){
 		super(scene, 0, 0, 0, 0, 'h');
 
-		// save actor
+		// save actor and listen
 		this.actor = actor;
+		this.actor.on('damage', function(amount){
+			create_floating_text(this.scene, this.actor.x, this.actor.y, '-' + amount, 0xff0000, 32, true, 2000);
+		}.bind(this));
+		this.actor.on('heal', function(amount){
+
+		}, this);
 
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
