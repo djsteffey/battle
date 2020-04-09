@@ -183,6 +183,11 @@ class SceneBattle extends Phaser.Scene {
 
     create() {
 		console.log('SceneBattle::create()');
+
+		// turn and round tracking
+		this.round = 0;
+		this.turn_order = [0, 1];
+		this.current_turn = 0;
 		
 		// create the actor sprites
 		this.actors_sprites = [
@@ -221,24 +226,29 @@ class SceneBattle extends Phaser.Scene {
 			bottom: '98%'
 		});
 		this.action_selector.on('selection', function(index){
+			// execute the skill
 			this.teams[0].actors[0].abilities[index].execute(this, this.teams[0].actors[0], this.teams[0], this.teams[1]);
 
-			// update cooldowns
-			this.teams[0].actors[0].abilities[0].decrement_cooldown_remaining();
-			this.teams[0].actors[0].abilities[1].decrement_cooldown_remaining();
-			this.teams[0].actors[0].abilities[2].decrement_cooldown_remaining();
-
-			// update action selector
-			this.action_selector.update();
-
-			// update status
-			this.actors_status[0].update();
-			this.actors_status[1].update();
+			// end the turn type stuff
+			this.end_of_round();
 		}, this);
 		this.action_selector.set_actor(this.teams[0].actors[0]);
     }	
 	
 	update() {
+	}
+
+	end_of_round(){
+		// update cooldowns
+		for (let i = 0; i < this.teams.length; ++i){
+			for (let j = 0; j < this.teams[i].actors.length; ++j){
+				for (let k = 0; k < this.teams[i].actors[j].abilities.length; ++k){
+					if (this.teams[i].actors[j].abilities[k] !== null){
+						this.teams[i].actors[j].abilities[k].decrement_cooldown_remaining();
+					}
+				}
+			}
+		}
 	}
 }
 

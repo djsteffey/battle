@@ -31,9 +31,17 @@ const DATA = {
 		{
 			name: 'Attack',
 			graphics_index: 1,
-			cooldown: 2,
+			cooldown: 0,
 			execute(scene, actor, friendly_team, enemy_team){
 				enemy_team.actors[0].damage(1);
+			}
+		},
+		{
+			name: 'Heal',
+			graphics_index: 1,
+			cooldown: 3,
+			execute(scene, actor, friendly_team, enemy_team){
+				enemy_team.actors[0].heal(1);
 			}
 		}
 	]

@@ -182,6 +182,9 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 		
 		// font size for text components
 		const font_size = 24;
+
+		// no actor to start
+		this.actor = null;
 		
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
@@ -245,7 +248,27 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 	}
 	
 	set_actor(actor){
+		// remove current listeners
+		if (this.actor !== null){
+			this.actor.removeListener(this.on_actor_change);
+		}
+
+		// save the actor
 		this.actor = actor;
+
+		// setup listeners if needed
+		if (this.actor !== null){
+			// listen for different changes
+			this.actor.on('damage', this.on_actor_change.bind(this));
+			this.actor.on('heal', this.on_actor_change.bind(this));
+		}
+
+		// signal a change
+		this.on_actor_change();
+	}
+
+	on_actor_change(actor, amount){
+		// initialize vales
 		if (this.actor !== null){
 			this.hp.set_value(this.actor.stats.effective.hp);
 			this.hp.set_max_value(this.actor.stats.effective.hp_max);
@@ -262,15 +285,14 @@ class BattleActorStatus extends RexPlugins.UI.Sizer{
 		}
 		this.layout();
 	}
-
-	update(){
-		this.set_actor(this.actor);
-	}
 }
 
 class BattleActionSelector extends RexPlugins.UI.Sizer{
 	constructor(scene, actor = null){
 		super(scene, 0, 0, 0, 0, 'h');
+
+		// no starting actor
+		this.actor = null;
 
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));
@@ -332,23 +354,22 @@ class BattleActionSelector extends RexPlugins.UI.Sizer{
 			]			
 		})
 		.on('button.click', function(button, index, pointer, event){
-			switch(index){
-				case 0:{
-					// ability 0
-				} break;
-				case 1:{
-					// ability 1
-				} break;
-				case 2:{
-					// ability 2
-				} break;
-				case 3:{
-					// swap
-				} break;
-				case 4:{
-					// surrender
-				} break;
+			// can only select an action if there is an actor
+			if (this.actor === null){
+				return;
 			}
+
+			// if an ability then it must be ready
+			if (index <= 2){
+				if (this.actor.abilities[index] === null){
+					return;
+				}
+				if (this.actor.abilities[index].is_ready === false){
+					return;
+				}
+			}
+
+			// good to go
 			this.emit('selection', index);
 		}, this)
 		.on('button.over', function(button, index, pointer, event){
@@ -367,23 +388,49 @@ class BattleActionSelector extends RexPlugins.UI.Sizer{
 	}
 
 	set_actor(actor){
-		this.actor = actor;
-		
+		// remove old listeners if needed
 		if (this.actor !== null){
-			this.buttons.getButton(0).getElement('text').text = '' + this.actor.abilities[0].cooldown_remaining;
-			this.buttons.getButton(1).getElement('text').text = '' + this.actor.abilities[1].cooldown_remaining;
-			this.buttons.getButton(2).getElement('text').text = '' + this.actor.abilities[2].cooldown_remaining;
+			for (let i = 0; i < this.actor.abilities.length; ++i){
+				if (this.actor.abilities[i] !== null){
+					this.actor.abilities[i].removeListener(this.on_ability_change);
+				}
+			}
 		}
-		else{
-			this.buttons.getButton(0).getElement('text').text = '';
-			this.buttons.getButton(1).getElement('text').text = '';
-			this.buttons.getButton(2).getElement('text').text = '';
+
+		// save the actor
+		this.actor = actor;
+
+		// add listeners if needed
+		if (this.actor !== null){
+			for (let i = 0; i < this.actor.abilities.length; ++i){
+				if (this.actor.abilities[i] !== null){
+					this.actor.abilities[i].on('cooldown_change', this.on_ability_change.bind(this));
+				}
+			}
 		}
-		this.layout();
+
+		// trigger a change
+		this.on_ability_change();
+
 	}
 
-	update(){
-		this.set_actor(this.actor);
+	on_ability_change(){
+		if (this.actor !== null){
+			for (let i = 0; i < 3; i++){
+				if (this.actor.abilities[i] !== null){
+					this.buttons.getButton(i).getElement('text').text = '' + this.actor.abilities[i].cooldown_remaining;
+				}
+				else{
+					this.buttons.getButton(i).getElement('text').text = 'NA'
+				}
+			}
+		}
+		else{
+			this.buttons.getButton(0).getElement('text').text = 'NA';
+			this.buttons.getButton(1).getElement('text').text = 'NA';
+			this.buttons.getButton(2).getElement('text').text = 'NA';
+		}
+		this.layout();
 	}
 }
 
@@ -393,12 +440,12 @@ class BattleActorSprite extends RexPlugins.UI.Sizer{
 
 		// save actor and listen
 		this.actor = actor;
-		this.actor.on('damage', function(amount){
-			create_floating_text(this.scene, this.actor.x, this.actor.y, '-' + amount, 0xff0000, 32, true, 2000);
+		this.actor.on('damage', function(actor, amount){
+			create_floating_text(this.scene, this.sprite.x, this.sprite.y - this.sprite.displayHeight / 2, '-' + amount, 0xff0000, 32, true, 1000, 150);
 		}.bind(this));
-		this.actor.on('heal', function(amount){
-
-		}, this);
+		this.actor.on('heal', function(actor, amount){
+			create_floating_text(this.scene, this.sprite.x, this.sprite.y - this.sprite.displayHeight / 2, '' + amount, 0x00ff00, 32, true, 1000, 150);
+		}.bind(this));
 
 		// background
 		this.addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 4, 0x000000).setStrokeStyle(2, 0xffffff));

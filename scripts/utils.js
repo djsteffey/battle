@@ -19,7 +19,7 @@ function get_random_float(min, max) {
     return (Math.random() * (max - min)) + min;
 }
 
-function create_floating_text(scene, x, y, message, tint, size, bold, duration) {
+function create_floating_text(scene, x, y, message, tint, size, bold, duration, distance = 100) {
     const text = scene.add.text(
         x,
         y,
@@ -37,7 +37,7 @@ function create_floating_text(scene, x, y, message, tint, size, bold, duration) 
         ease: 'Exponential.In',
         duration: duration,
         delay: 0,
-        y: y - 50,
+        y: y - distance,
         alpha: 0,
         onComplete: () => {
             text.destroy();
